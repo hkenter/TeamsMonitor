@@ -42,10 +42,10 @@ class TeamsWebhookC:
                                                  https_proxy="http://ip:port/")
         self.myTeamsMessage.title("Job异常提醒！")
         self.myTeamsMessage.text("请关注以下：")
-        self.myTeamsMessage.addLinkButton("点我跳转cndcwprdetlp002 WEB控制台",
-                                     "http://cndcwprdetlp002:8080/DataServices/launch/logon.action")
-        self.myTeamsMessage.addLinkButton("点我跳转cndcwetlp001 WEB控制台",
-                                     "http://cndcwetlp001:8080/DataServices/launch/logon.do")
+        self.myTeamsMessage.addLinkButton("点我跳转002 WEB控制台",
+                                     "http://")
+        self.myTeamsMessage.addLinkButton("点我跳转001 WEB控制台",
+                                     "http://")
         self.myTeamsMessage.color("#DC143C")
 
     def createWebhook(self, job_title, level, advice, reason, img_url):
