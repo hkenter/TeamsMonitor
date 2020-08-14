@@ -9,10 +9,10 @@ import sys, signal
 import pymsteams
 from kafka import KafkaConsumer
 
-KAFAKA_HOST = "172.17.0.8:9092,172.17.0.2:9092,172.17.0.5:9092"  # 服务器端口地址
+KAFAKA_HOST = "ip:9092,ip:9092,ip:9092"  # 服务器端口地址
 KAFAKA_PORT = 9092    # 端口号
-KAFAKA_WARN_TOPIC = "job-error"  # topic
-KAFAKA_INFO_TOPIC = "job-monitor"  #topic
+KAFAKA_WARN_TOPIC = "error"  # topic
+KAFAKA_INFO_TOPIC = "monitor"  #topic
 
 class KafkaConsumerC():
     def __init__(self, kafkahost, kafkaport, kafkatopic, groupid, key):
@@ -99,19 +99,6 @@ class RunInfoConsumerThread (threading.Thread):
         for msg in info_message:
             print("INFO LEVEL------------------------------------------------------------------------------")
             print(msg.value)
-            msgSplit = bytes.decode(msg.value).split(",")
-            level = "Info"
-            advice = ""
-            if msgSplit[4] == 'S':
-                advice = "正在运行"
-            elif msgSplit[4] == "D":
-                advice = "运行完毕"
-            else:
-                advice = "发送异常"
-            run_time = msgSplit[5] + " => " + msgSplit[6]
-            reason = "执行时间：" + run_time
-            jobInfoWebhookC = JobInfoWebhookC()
-            jobInfoWebhookC.createWebhook(msgSplit[3], level, advice, reason)
 
 
 class RunWarnConsumerThread(threading.Thread):
@@ -125,24 +112,6 @@ class RunWarnConsumerThread(threading.Thread):
         for msg in warn_message:
             print("WARN LEVEL------------------------------------------------------------------------------")
             print(msg.value)
-            msgSplit = bytes.decode(msg.value).split(",")
-            level = "Info"
-            advice = ""
-            reason = ""
-            run_time = msgSplit[5] + " => " + msgSplit[6]
-            plan_time = msgSplit[12] + " => " + msgSplit[13]
-            if msgSplit[msgSplit.__len__() - 3] == "1" and msgSplit[msgSplit.__len__() - 2] == "0":
-                level = "Warning"
-                advice = "建议：可能需要人工介入"
-                reason = "原因：非计划时间内执行<br/>执行时间：" + run_time + "<br/>计划时间：" + plan_time
-                teamsWebHook = TeamsWebhookC()
-                teamsWebHook.createWebhook(msgSplit[3], level, advice, reason, "https://www.socialworker.com/downloads/296/download/caution-152926_640.png?cb=ca1ea16078f1b6307db06ea9cc2d26ff")
-            elif msgSplit[msgSplit.__len__() - 2] == "1":
-                level = "Error"
-                advice = "建议：请立即人工介入处理"
-                reason = "原因：运行失败<br/>执行时间：" + run_time + "<br/>计划时间：" + plan_time
-                teamsWebHook = TeamsWebhookC()
-                teamsWebHook.createWebhook(msgSplit[3], level, advice, reason, "https://wusfnews.wusf.usf.edu/sites/wusf/files/201206/error2.png")
 
 
 def quit(signum, frame):
